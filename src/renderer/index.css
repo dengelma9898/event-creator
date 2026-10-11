@@ -1,0 +1,173 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --radius: 0.625rem;
+
+  /* Sanfteres Mac-Farbschema: Warmes Off-White, dezente Ränder, harmonische Akzente */
+  /* Light Mode */
+  --background: oklch(0.985 0.003 85); /* Sanftes, warmes Off-White */
+  --foreground: oklch(0.18 0.01 60); /* Angenehmes Graphit-Schwarz */
+  --card: oklch(1 0 0); /* Sauberes Weiß für Karten */
+  --card-foreground: oklch(0.18 0.01 60);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.01 60);
+  --primary: oklch(1 0 0);
+  --primary-foreground: oklch(0.18 0.01 60);
+  --secondary: oklch(0.22 0.01 60); /* Dunkles Schiefer */
+  --secondary-foreground: oklch(0.99 0 0);
+  --tertiary: oklch(0.577 0.245 27.325); /* Nürnbergspots Rot */
+  --tertiary-foreground: oklch(1 0 0);
+  --muted: oklch(0.955 0.004 85); /* Sanftes Grau */
+  --muted-foreground: oklch(0.46 0.015 60);
+  --accent: oklch(0.945 0.006 85);
+  --accent-foreground: oklch(0.18 0.01 60);
+  --destructive: oklch(0.58 0.22 27);
+  --destructive-foreground: oklch(1 0 0);
+  --success: oklch(0.62 0.17 145); /* Harmonisches Mac-Grün */
+  --success-foreground: oklch(1 0 0);
+  --warning: oklch(0.74 0.16 75); /* Warmes Bernstein für Hinweise */
+  --warning-foreground: oklch(0.22 0.05 75);
+  --error: oklch(0.58 0.22 27);
+  --error-foreground: oklch(1 0 0);
+  --border: oklch(0.88 0.006 85); /* Weicher, unaufdringlicher Rahmen */
+  --input: oklch(0.91 0.006 85);
+  --ring: oklch(0.577 0.245 27.325);
+}
+
+.dark {
+  /* Dark Mode: Sanfteres Graphit statt hartem Schwarz */
+  --background: oklch(0.16 0.008 60);
+  --foreground: oklch(0.96 0.004 85);
+  --card: oklch(0.21 0.008 60);
+  --card-foreground: oklch(0.96 0.004 85);
+  --popover: oklch(0.21 0.008 60);
+  --popover-foreground: oklch(0.96 0.004 85);
+  --primary: oklch(0.16 0.008 60);
+  --primary-foreground: oklch(0.96 0.004 85);
+  --secondary: oklch(0.96 0.004 85);
+  --secondary-foreground: oklch(0.16 0.008 60);
+  --tertiary: oklch(0.704 0.191 22.216);
+  --tertiary-foreground: oklch(1 0 0);
+  --muted: oklch(0.25 0.008 60);
+  --muted-foreground: oklch(0.72 0.01 85);
+  --accent: oklch(0.27 0.008 60);
+  --accent-foreground: oklch(0.96 0.004 85);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(1 0 0);
+  --success: oklch(0.72 0.18 145);
+  --success-foreground: oklch(0.15 0.02 145);
+  --warning: oklch(0.82 0.16 75);
+  --warning-foreground: oklch(0.2 0.05 75);
+  --error: oklch(0.704 0.191 22.216);
+  --error-foreground: oklch(1 0 0);
+  --border: oklch(0.3 0.01 60);
+  --input: oklch(0.27 0.008 60);
+  --ring: oklch(0.704 0.191 22.216);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html, body, #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+.app-drag {
+  -webkit-app-region: drag;
+}
+
+.app-no-drag {
+  -webkit-app-region: no-drag;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scale-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes background-pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.05;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.05);
+    opacity: 0.1;
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease both;
+}
+
+.motion-background-pulse {
+  animation: background-pulse 8s ease-in-out infinite;
+}
+
+.motion-hover-scale {
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.motion-hover-scale:hover {
+  transform: scale(1.02);
+}
+
+.motion-tap-scale:active {
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in-up,
+  .animate-fade-in,
+  .motion-background-pulse {
+    animation: none;
+  }
+
+  .motion-hover-scale:hover,
+  .motion-tap-scale:active {
+    transform: none;
+  }
+}

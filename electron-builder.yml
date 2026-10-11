@@ -1,0 +1,30 @@
+appId: com.nuernbergspots.eventcreator
+productName: Event Creator
+directories:
+  output: release
+  buildResources: build
+files:
+  - dist
+  - dist-electron
+  - skills
+  - package.json
+extraResources:
+  - from: csv-import-check.js
+    to: csv-import-check.js
+  - from: skills
+    to: skills
+asarUnpack:
+  - "**/@playwright/mcp/**"
+  - "**/playwright-core/**"
+mac:
+  category: public.app-category.utilities
+  icon: build/icon.icns
+  identity: null
+  hardenedRuntime: false
+  # Die Architektur steht bewusst nicht hier, sondern in den npm-Scripts
+  # (--arm64 = Standard, --x64 = Intel). Eine feste `arch:` an den Targets
+  # würde die CLI-Flags überstimmen.
+  target:
+    - dir
+    - dmg
+    - zip
