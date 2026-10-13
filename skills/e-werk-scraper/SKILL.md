@@ -40,6 +40,10 @@ Webseite: https://www.e-werk.de/
 - `Kategorien` enthält **nur** den exakten App-Kategorie-`name` (ein Wert) oder bleibt **leer**.
 - Quell-Kategorie nur intern als `sourceCategory` für die Zuordnung nutzen.
 
+### Regel: Adress-Fallback (Referenz: `skills/address-completion`)
+
+- Die feste Kombinationsregel für den Veranstaltungsort oben hat Vorrang. Nur falls der Ort dennoch unvollständig wäre, gilt die Adresssuche aus `skills/address-completion`.
+
 ### Regel: Abgesagte Events
 
 Vor CSV-Aufnahme Event **überspringen** wenn:

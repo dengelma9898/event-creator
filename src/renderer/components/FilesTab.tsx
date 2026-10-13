@@ -9,6 +9,7 @@ import {
   ArrowRight,
   Loader2,
   FileText,
+  CloudUpload,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -22,6 +23,8 @@ import { spring, fadeUpVariants, scalePopVariants, tapHover } from '../lib/motio
 
 interface FilesTabProps {
   onNavigateToScrape: () => void;
+  /** Öffnet den Upload-Dialog (Datei, Stage, Zugang, Bestätigung) mit diesen Dateien vorausgewählt. */
+  onRequestUpload: (fileNames: string[]) => void;
 }
 
 function formatBytes(bytes: number): string {
@@ -47,7 +50,7 @@ function formatDate(isoString: string): string {
   }
 }
 
-export const FilesTab: React.FC<FilesTabProps> = ({ onNavigateToScrape }) => {
+export const FilesTab: React.FC<FilesTabProps> = ({ onNavigateToScrape, onRequestUpload }) => {
   const [files, setFiles] = useState<CsvFileInfo[]>([]);
   const [selectedFileName, setSelectedFileName] = useState<string>('all');
   const [isLoadingFiles, setIsLoadingFiles] = useState<boolean>(true);
@@ -215,6 +218,20 @@ export const FilesTab: React.FC<FilesTabProps> = ({ onNavigateToScrape }) => {
         </div>
 
         <div className="flex items-center gap-2">
+          <motion.button
+            type="button"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            transition={spring.snappy}
+            onClick={() => onRequestUpload(selectedFileName === 'all' ? [] : [selectedFileName])}
+            disabled={isLoadingFiles || files.length === 0}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-secondary text-secondary-foreground hover:bg-secondary/90 border border-secondary shadow-2xs cursor-pointer disabled:opacity-40"
+            title="Eine CSV-Datei zu Test oder Prod hochladen (immer nur eine pro Durchgang)"
+          >
+            <CloudUpload className="w-3.5 h-3.5" />
+            <span>In Nürnbergspots übernehmen</span>
+          </motion.button>
+
           <motion.button
             type="button"
             whileHover={{ scale: 1.02 }}

@@ -24,6 +24,11 @@ Dieser Skill extrahiert Event-Details von der spezifischen Seite https://www.cur
 - Kein Semikolon-Mehrfachwert
 - Rohe Quell-Kategorie nur intern als `sourceCategory` für die Zuordnung nutzen
 
+### Regel: Veranstaltungsort vervollständigen (Referenz: `skills/address-completion`)
+
+- Liefert die Detailseite nur den Namen der Einrichtung (z. B. „Villa Leon“, „Buni“, „kultur.lokal.fürth“) ohne Straße/PLZ/Stadt, führe **vor `add_event`** die kurze Adresssuche aus `skills/address-completion` per Playwright aus.
+- Wird keine verlässliche Adresse gefunden, speichere das Event trotzdem mit dem vorhandenen Namen.
+
 ### Regel: Abgesagte Events
 
 Vor CSV-Aufnahme Event **überspringen** wenn:

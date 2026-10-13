@@ -5,6 +5,7 @@ import { motion, AnimatePresence, MotionConfig } from 'motion/react';
 import type { SkillMetadata } from '../shared/types.js';
 import { SettingsModal } from './components/SettingsModal.js';
 import { OnboardingModal } from './components/OnboardingModal.js';
+import { UploadConfirmModal } from './components/UploadConfirmModal.js';
 import { ScrapeTab } from './components/ScrapeTab.js';
 import { FilesTab } from './components/FilesTab.js';
 import { AssistantTab } from './components/AssistantTab.js';
@@ -39,6 +40,8 @@ export default function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const [isOnboardingOpen, setIsOnboardingOpen] = useState<boolean>(false);
   const [hasKeyConfigured, setHasKeyConfigured] = useState<boolean>(true);
+  /** Dateien, mit denen der Upload-Dialog geöffnet wurde; `null` = Dialog zu. */
+  const [uploadRequest, setUploadRequest] = useState<string[] | null>(null);
 
   const switchTab = useCallback((nextTab: TabId) => {
     setActiveTab((prev) => {
@@ -165,7 +168,7 @@ export default function App() {
               {...tapHover.iconButton}
               onClick={() => setIsSettingsOpen(true)}
               className="inline-flex items-center justify-center h-8 w-8 rounded-lg border border-border bg-background hover:bg-muted text-foreground transition-colors focus:outline-none focus:ring-1 focus:ring-ring cursor-pointer"
-              title="Einstellungen & Schlüssel (Cmd + ,)"
+              title="Einstellungen & Zugänge (Cmd + ,)"
               aria-label="Einstellungen öffnen"
             >
               <Settings className="w-4 h-4 text-foreground" />
@@ -234,10 +237,14 @@ export default function App() {
                   selectedSkillId={selectedSkillId}
                   onSelectSkill={setSelectedSkillId}
                   onRefreshSkills={loadSkills}
+                  onRequestUpload={setUploadRequest}
                 />
               )}
               {activeTab === 'files' && (
-                <FilesTab onNavigateToScrape={() => switchTab('scrape')} />
+                <FilesTab
+                  onNavigateToScrape={() => switchTab('scrape')}
+                  onRequestUpload={setUploadRequest}
+                />
               )}
               {activeTab === 'wizard' && (
                 <AssistantTab
@@ -254,6 +261,12 @@ export default function App() {
           isOpen={isSettingsOpen}
           onClose={() => setIsSettingsOpen(false)}
           onKeyStatusChanged={checkKeyStatus}
+        />
+
+        <UploadConfirmModal
+          isOpen={uploadRequest !== null}
+          preselected={uploadRequest ?? []}
+          onClose={() => setUploadRequest(null)}
         />
 
         <OnboardingModal

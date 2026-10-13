@@ -30,8 +30,14 @@ import type {
   CsvFileInfo,
   DeleteEventParams,
   DeleteEventResult,
+  NuernbergspotsLoginInput,
+  NuernbergspotsLoginResult,
+  NuernbergspotsStatus,
+  NuernbergspotsUploadInput,
   UpdateEventParams,
   UpdateEventResult,
+  UploadResult,
+  UploadTarget,
   RunStatusUpdate,
   RunnerCancelResult,
   RunnerStartResult,
@@ -52,6 +58,14 @@ export type IpcContract = {
   'apiKey:isConfigured': { request: void; response: boolean };
   'apiKey:set': { request: string; response: boolean };
   'apiKey:clear': { request: void; response: boolean };
+
+  /** Anmeldung bei Nürnbergspots (Firebase) und CSV-Upload – nur im Hauptprozess. */
+  /** Alle vier nehmen die Stage (`test` | `prod`) mit; Sitzungen sind je Stage getrennt. */
+  'nuernbergspots:getStatus': { request: UploadTarget; response: NuernbergspotsStatus };
+  'nuernbergspots:login': { request: NuernbergspotsLoginInput; response: NuernbergspotsLoginResult };
+  'nuernbergspots:logout': { request: UploadTarget; response: boolean };
+  /** Nimmt ausschliesslich Dateinamen entgegen, keine Pfade. */
+  'nuernbergspots:upload': { request: NuernbergspotsUploadInput; response: UploadResult };
 
   'skills:list': { request: void; response: SkillMetadata[] };
   'skills:getAllStatuses': { request: void; response: Record<string, SourceStatusInfo> };
@@ -81,6 +95,10 @@ export const IPC_CHANNELS = [
   'apiKey:isConfigured',
   'apiKey:set',
   'apiKey:clear',
+  'nuernbergspots:getStatus',
+  'nuernbergspots:login',
+  'nuernbergspots:logout',
+  'nuernbergspots:upload',
   'skills:list',
   'skills:getAllStatuses',
   'skills:getStatus',

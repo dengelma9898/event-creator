@@ -126,6 +126,21 @@ export async function runImportGate(
 }
 
 /**
+ * Warum eine Datei den Upload nicht passieren darf – oder `null`, wenn sie ihn
+ * darf. Eine Datei, die nicht geprüft werden konnte, darf nicht hoch: „keine
+ * Verstöße“ wäre dann eine Aussage über nichts.
+ */
+export function describeUploadBlock(gate: GateResult): string | null {
+  if (!gate.ran) {
+    return 'Die Datei konnte vor dem Upload nicht geprüft werden. Frag Domi.';
+  }
+  if (gate.violations.length === 0) return null;
+
+  const labels = [...new Set(gate.violations.map((v) => v.ruleId))].map(labelFor);
+  return `Die Datei wurde nicht hochgeladen. ${labels.join(' ')}`;
+}
+
+/**
  * Ein kurzer deutscher Hinweis für die Oberfläche – niemals Prüfer-Interna.
  *
  * Wird nach einer *erfolgreichen* Löschung gezeigt: die Datei enthält weiterhin

@@ -335,6 +335,91 @@ export interface EditOutcome {
 }
 
 // ---------------------------------------------------------------------------
+// Nürnbergspots: Anmeldung & Upload
+// ---------------------------------------------------------------------------
+
+/**
+ * Wohin hochgeladen wird: `test` = Citylife (Firebase `citylife-fe75a`, API `/dev`),
+ * `prod` = Nürnbergspots (Firebase `nuernbergspots-b460a`, API `/prd`).
+ * Jede Stage hat eigene Zugangsdaten und eine eigene gespeicherte Sitzung.
+ */
+export type UploadTarget = 'test' | 'prod';
+
+export interface NuernbergspotsStatus {
+  target: UploadTarget;
+  connected: boolean;
+  /** E-Mail der angemeldeten Person – nur bei `connected`. */
+  email?: string;
+}
+
+export interface NuernbergspotsLoginInput {
+  target: UploadTarget;
+  email: string;
+  password: string;
+}
+
+export interface NuernbergspotsUploadInput {
+  target: UploadTarget;
+  /** Nur Dateinamen, keine Pfade. */
+  fileNames: string[];
+}
+
+export interface NuernbergspotsLoginResult {
+  success: boolean;
+  /** Kurze, deutsche Ursache – niemals Rohantworten des Servers. */
+  error?: string;
+  email?: string;
+}
+
+/**
+ * Warum ein Upload nicht (vollständig) lief. Die Oberfläche übersetzt jede
+ * Ursache in einen Alltagssatz und entscheidet daran, ob „Anmelden“ oder
+ * „Noch einmal versuchen“ angeboten wird.
+ */
+export type UploadErrorKind =
+  | 'not-connected'
+  | 'session-expired'
+  | 'forbidden'
+  | 'network'
+  | 'server'
+  | 'invalid-file';
+
+/** Ergebnis für genau eine CSV-Datei. */
+export interface UploadFileResult {
+  fileName: string;
+  success: boolean;
+  /** Nur bei Erfolg: Zählung des Backends. */
+  created: number;
+  duplicates: number;
+  failed: number;
+  /** Nur bei Erfolg: verarbeitete Zeilen laut Backend (`totalRows`). */
+  totalRows: number;
+  errorKind?: UploadErrorKind;
+  error?: string;
+  /** Kurzfassung fehlgeschlagener Zeilen, für „Details für Domi“. */
+  failedRows?: string[];
+}
+
+export interface UploadResult {
+  /** Stage, an die hochgeladen wurde. */
+  target: UploadTarget;
+  /** true, wenn alle Dateien hochgeladen wurden (auch wenn einzelne Zeilen abgelehnt wurden). */
+  success: boolean;
+  /** Summen über alle Dateien. */
+  created: number;
+  duplicates: number;
+  failed: number;
+  /** Summe der vom Backend verarbeiteten Zeilen. */
+  totalRows: number;
+  files: UploadFileResult[];
+  /** Ursache der ersten gescheiterten Datei – steuert die Oberflächenmeldung. */
+  errorKind?: UploadErrorKind;
+  error?: string;
+  /** Fertig formulierter Text für „Details für Domi kopieren“. */
+  detailsForDomi?: string;
+}
+
+// ---------------------------------------------------------------------------
 // Die LIVE-Zeile des Agenten
 // ---------------------------------------------------------------------------
 

@@ -33,6 +33,11 @@ Dieser Skill extrahiert Event-Details von https://www.fuerth.de/kultur-freizeit/
 - `Kategorien` enthält **nur** den exakten App-Kategorie-`name` (ein Wert) oder bleibt **leer**.
 - Quell-Kategorie nur intern als `sourceCategory` für die Zuordnung nutzen.
 
+### Regel: Veranstaltungsort vervollständigen (Referenz: `skills/address-completion`)
+
+- Liefert die Quelle nur den Namen der Einrichtung (z. B. „kultur.lokal.fürth“) ohne Straße/PLZ/Stadt, führe **vor `add_event`** die kurze Adresssuche aus `skills/address-completion` per Playwright aus (Region: Fürth).
+- Wird keine verlässliche Adresse gefunden, speichere das Event trotzdem mit dem vorhandenen Namen.
+
 ### Regel: Abgesagte Events
 
 Vor Übergabe an `add_event` Event **überspringen** wenn:

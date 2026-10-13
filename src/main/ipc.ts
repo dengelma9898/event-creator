@@ -17,8 +17,14 @@ import { AppPaths } from './app-paths.js';
 import { AssistantService } from './assistant-service.js';
 import { CsvService } from './csv-service.js';
 import { KeychainStore } from './keychain-store.js';
+import { NuernbergspotsAuth } from './nuernbergspots-auth.js';
+import { getNuernbergspotsConfig } from './nuernbergspots-config.js';
+import { SafeStorageSessionStore } from './session-store.js';
+import { UploadService } from './upload-service.js';
 import { SkillLoader } from './skill-loader.js';
 import type { IpcContract } from '../shared/ipc-contract.js';
+import type { UploadTarget } from '../shared/types.js';
+import { assertUploadTarget } from '../shared/upload-target.js';
 
 /**
  * Die Dienste, die die Handler brauchen – jeweils nur die benutzten Methoden.
@@ -27,6 +33,10 @@ import type { IpcContract } from '../shared/ipc-contract.js';
  */
 export interface IpcDeps {
   keychain: Pick<KeychainStore, 'isConfigured' | 'setApiKey' | 'clearApiKey'>;
+  /** Anmeldung der gewählten Stage – jede Stage hat ihre eigene Sitzung. */
+  nuernbergspots: (target: UploadTarget) => Pick<NuernbergspotsAuth, 'getStatus' | 'login' | 'logout'>;
+  /** Upload zur gewählten Stage. */
+  uploader: (target: UploadTarget) => Pick<UploadService, 'uploadFiles'>;
   skills: Pick<SkillLoader, 'listSkills' | 'getSkill'>;
   runner: Pick<AgentRunner, 'startRun' | 'cancelRun'>;
   assistant: Pick<AssistantService, 'analyzeSource' | 'saveSkill'>;
@@ -58,6 +68,20 @@ export function buildIpcHandlers(deps: IpcDeps): IpcHandlers {
     'apiKey:isConfigured': () => deps.keychain.isConfigured(),
     'apiKey:set': (key) => deps.keychain.setApiKey(key),
     'apiKey:clear': () => deps.keychain.clearApiKey(),
+
+    // 1b. Nürnbergspots: Anmeldung & Upload (Netzwerkzugriff nur hier im Hauptprozess)
+    // Eine unbekannte Stage wird abgewiesen, nie still zu Produktion umgedeutet (ADR 0003).
+    'nuernbergspots:getStatus': (target) => deps.nuernbergspots(assertUploadTarget(target)).getStatus(),
+    'nuernbergspots:login': (input) =>
+      deps.nuernbergspots(assertUploadTarget(input?.target)).login(input),
+    'nuernbergspots:logout': (target) => {
+      deps.nuernbergspots(assertUploadTarget(target)).logout();
+      return true;
+    },
+    'nuernbergspots:upload': (input) =>
+      deps.uploader(assertUploadTarget(input?.target)).uploadFiles(
+        Array.isArray(input?.fileNames) ? input.fileNames : []
+      ),
 
     // 2. Skills & Quellen auflisten
     'skills:list': () => deps.skills.listSkills(),
@@ -131,8 +155,22 @@ function assertOwnFrame(event: IpcMainInvokeEvent, win: BrowserWindow | null): v
  */
 export function registerIpcHandlers(win: () => BrowserWindow | null): void {
   const paths = AppPaths.getInstance();
+  // Je Stage genau eine Anmeldung (mit eigener Sitzungsdatei) und ein Uploader, erst bei Bedarf gebaut.
+  const stages = new Map<UploadTarget, { auth: NuernbergspotsAuth; uploader: UploadService }>();
+  const stage = (target: UploadTarget) => {
+    let entry = stages.get(target);
+    if (!entry) {
+      const config = getNuernbergspotsConfig(target);
+      const auth = new NuernbergspotsAuth({ store: new SafeStorageSessionStore(target), config });
+      entry = { auth, uploader: new UploadService({ auth, paths, config }) };
+      stages.set(target, entry);
+    }
+    return entry;
+  };
   const deps: IpcDeps = {
     keychain: KeychainStore.getInstance(),
+    nuernbergspots: (target) => stage(target).auth,
+    uploader: (target) => stage(target).uploader,
     skills: new SkillLoader(),
     runner: AgentRunner.getInstance(),
     assistant: AssistantService.getInstance(),

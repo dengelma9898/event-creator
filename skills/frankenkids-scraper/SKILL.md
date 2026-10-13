@@ -51,6 +51,11 @@ Extraktions-Muster und `mapCategory`-Reihenfolge: [reference.md](reference.md)
 - Rohes Frankenkids-Tag nur intern als `sourceCategory`
 - Mapping: `event-category-mapper` (Override: frankenkids-scraper)
 
+### Veranstaltungsort vervollständigen (Referenz: `skills/address-completion`)
+
+- Liefert die Detailseite nur den Namen der Einrichtung ohne Straße/PLZ/Stadt, führe **vor `add_event`** die kurze Adresssuche aus `skills/address-completion` per Playwright aus.
+- Wird keine verlässliche Adresse gefunden, speichere das Event trotzdem mit dem vorhandenen Namen.
+
 ### Abgesagte Events (überspringen)
 
 - Titel: `/^abgesagt:/i` oder `/\b(abgesagt|cancelled|verschoben)\b/i`

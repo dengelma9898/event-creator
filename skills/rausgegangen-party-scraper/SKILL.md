@@ -21,6 +21,11 @@ WICHTIG: Die Event-Liste ist nur Einstiegspunkt. Relevante Daten kommen von den 
 - `Kategorien` enthält **nur** den exakten App-Kategorie-`name` (ein Wert) oder bleibt **leer**.
 - Quell-Kategorie nur intern als `sourceCategory` für die Zuordnung nutzen.
 
+### Regel: Veranstaltungsort vervollständigen (Referenz: `skills/address-completion`)
+
+- Liefert die Detailseite nur den Namen der Einrichtung ohne Straße/PLZ/Stadt, führe **vor `add_event`** die kurze Adresssuche aus `skills/address-completion` per Playwright aus.
+- Wird keine verlässliche Adresse gefunden, speichere das Event trotzdem mit dem vorhandenen Namen.
+
 ### Regel: Abgesagte Events
 
 Vor Übergabe an `add_event` Event **überspringen** wenn:

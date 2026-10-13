@@ -41,6 +41,10 @@ Dieser Skill extrahiert Event-Details von https://z-bau.com/programm. Es gibt ke
 - Rohes Z-Bau-Genre (h3) nur intern als `genre` für die Zuordnung nutzen.
 - `genre` niemals in `description` kopieren.
 
+### Regel: Adress-Fallback (Referenz: `skills/address-completion`)
+
+- Der feste Veranstaltungsort oben hat Vorrang. Nur falls der Ort dennoch unvollständig wäre, gilt die Adresssuche aus `skills/address-completion`.
+
 ### Regel: Abgesagte Events
 
 Vor `add_event` Event **überspringen** wenn:

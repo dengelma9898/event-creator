@@ -311,7 +311,7 @@ export class AgentRunner {
       '',
       'Arbeitsweise & Werkzeuge:',
       `1. Beachte die Quell-Anweisungen in "${relativeSkillPath}" (Selektoren, Webseiten-Struktur, Ortsangaben, Kategorie-Mapping).`,
-      '2. Verwende ausschließlich Playwright MCP Browser-Automation zur Navigation auf der Webseite.',
+      '2. Verwende ausschließlich Playwright MCP Browser-Automation zur Navigation auf der Webseite. Einzige Ausnahme: Ist der Veranstaltungsort nur ein Einrichtungsname ohne Straße/PLZ/Stadt, darfst du vor "add_event" kurz per Playwright eine Websuche zur Adressvervollständigung machen (Regeln: "skills/address-completion/SKILL.md"). Danach zurück zur Quellseite. Findest du keine verlässliche Adresse, speichere das Event trotzdem mit dem vorhandenen Namen.',
       '3. PHASE 1 - TERMINLISTE & PLAN: Öffne die Webseite, überblicke die anstehenden Termine und rufe SOFORT das Werkzeug "announce_plan" auf mit allen gefundenen Kandidaten.',
       '4. PHASE 2 - DETAILS EINZELN ERFASSEN & SPEICHERN: Für jeden Kandidaten:',
       '   a) Rufe optional "report_step" auf (z. B. message: "Lade Details für Konzert X", candidateTitle: "Konzert X").',

@@ -5,6 +5,7 @@ import { AppPaths } from './app-paths.js';
 
 const EXCLUDED_SKILL_DIRS = new Set([
   'csv-handling',
+  'address-completion',
   'event-category-mapper',
   'scraper-playbook',
   'scraper-orchestrator',

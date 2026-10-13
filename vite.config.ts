@@ -46,19 +46,19 @@ export default defineConfig({
         },
       },
       {
-        entry: 'src/preload/preload.ts',
         onstart(options) {
           options.reload();
         },
         vite: {
           build: {
             outDir: 'dist-electron',
-            lib: {
-              entry: 'src/preload/preload.ts',
-              formats: ['cjs'],
-              fileName: () => 'preload.cjs',
-            },
+            // Bewusst kein `entry`/`build.lib`: Mit `"type": "module"` ergänzt
+            // vite-plugin-electron `formats: ['es']`, Vite fügt das Array mit
+            // unserem `['cjs']` zusammen und beide Formate schreiben in dieselbe
+            // `preload.cjs` – je nach Rennen entsteht ESM, das der Sandbox-
+            // Preload nicht laden kann (`window.electronAPI` fehlt).
             rollupOptions: {
+              input: 'src/preload/preload.ts',
               external: ['electron'],
               output: {
                 format: 'cjs',

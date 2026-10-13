@@ -12,6 +12,7 @@ import {
   Sparkles,
   Info,
   Clock,
+  CloudUpload,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -46,6 +47,8 @@ interface ScrapeTabProps {
   selectedSkillId: string;
   onSelectSkill: (id: string) => void;
   onRefreshSkills: () => void;
+  /** Öffnet den Upload-Dialog (Datei, Stage, Zugang, Bestätigung) mit diesen Dateien vorausgewählt. */
+  onRequestUpload: (fileNames: string[]) => void;
 }
 
 export const ScrapeTab: React.FC<ScrapeTabProps> = ({
@@ -53,6 +56,7 @@ export const ScrapeTab: React.FC<ScrapeTabProps> = ({
   selectedSkillId,
   onSelectSkill,
   onRefreshSkills,
+  onRequestUpload,
 }) => {
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [phase, setPhase] = useState<RunPhase>('idle');
@@ -64,6 +68,7 @@ export const ScrapeTab: React.FC<ScrapeTabProps> = ({
   const [detailsForDomiText, setDetailsForDomiText] = useState<string>('');
   const [copiedDetails, setCopiedDetails] = useState<boolean>(false);
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
+
 
   // CSV Events Anzeige
   const [loadedEvents, setLoadedEvents] = useState<CsvEventRecord[]>([]);
@@ -625,10 +630,34 @@ export const ScrapeTab: React.FC<ScrapeTabProps> = ({
                   {fileNames.length > 1 && (
                     <p className="text-[11px] text-muted-foreground pt-1">
                       Aufgrund der Menge (&gt;50 Einträge) wurden {fileNames.length} übersichtliche CSV-Dateien angelegt.
+                      Übernimm sie nacheinander: immer nur eine Datei pro Durchgang, danach den Dialog erneut öffnen
+                      (zum Beispiel über „Gespeicherte Dateien“).
                     </p>
                   )}
                 </div>
               </div>
+
+              {/* Übernahme in Nürnbergspots: Datei, Stage und Zugang wählt der Dialog */}
+              {fileNames.length > 0 && (
+                <div className="pt-3 border-t border-border space-y-3">
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    Prüfe die Termine in der Liste, bevor du sie übernimmst. Im Dialog wählst du genau eine Datei und die Stage
+                    (Test oder Prod) und bestätigst den Upload. Auf Prod sind sie danach sofort in der
+                    Nürnbergspots-App sichtbar; spätere Änderungen hier gehen nicht automatisch online.
+                  </p>
+                  <motion.button
+                    type="button"
+                    whileHover={{ scale: 1.015 }}
+                    whileTap={{ scale: 0.985 }}
+                    transition={spring.snappy}
+                    onClick={() => onRequestUpload(fileNames.slice(0, 1))}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-secondary text-secondary-foreground hover:bg-secondary/90 border border-secondary font-semibold text-xs shadow-2xs cursor-pointer"
+                  >
+                    <CloudUpload className="w-3.5 h-3.5" />
+                    <span>In Nürnbergspots übernehmen</span>
+                  </motion.button>
+                </div>
+              )}
 
               <div className="flex items-center justify-between pt-3 border-t border-border">
                 <motion.button

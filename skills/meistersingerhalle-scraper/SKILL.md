@@ -28,6 +28,10 @@ Die Detailseite nennt nur den Saal (z. B. „Meistersingerhalle - Großer Saal")
 
 Bei anderen Sälen/Angaben: den Saalnamen von der Seite übernehmen und `, Münchener Str. 21, 90478 Nürnberg` anhängen. Nur wenn die Detailseite ausdrücklich einen anderen Veranstaltungsort außerhalb der Meistersingerhalle nennt, diesen (mit PLZ und Stadt) verwenden.
 
+### Regel: Adress-Fallback (Referenz: `skills/address-completion`)
+
+- Die feste Adressregel oben hat Vorrang. Nur bei einem abweichenden Veranstaltungsort ohne Straße/PLZ/Stadt gilt die Adresssuche aus `skills/address-completion`.
+
 ### Regel: Abgesagte Events
 
 Vor Übergabe an `add_event` Event **überspringen** wenn:

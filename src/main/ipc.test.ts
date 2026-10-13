@@ -19,6 +19,14 @@ import { registeredHandlers } from './_electron-stub.js';
 const fakeDeps = (): IpcDeps =>
   ({
     keychain: { isConfigured: () => true, setApiKey: () => true, clearApiKey: () => true },
+    nuernbergspots: (target: string) => ({
+      getStatus: () => ({ target, connected: false }),
+      login: () => ({ success: true }),
+      logout: () => {},
+    }),
+    uploader: (target: string) => ({
+      uploadFiles: () => ({ target, success: true, created: 0, duplicates: 0, failed: 0, totalRows: 0, files: [] }),
+    }),
     skills: { listSkills: () => [], getSkill: () => undefined },
     runner: { startRun: () => ({ success: true }), cancelRun: () => ({ success: true }) },
     assistant: { analyzeSource: () => ({ success: true }), saveSkill: () => ({ success: true }) },
@@ -94,6 +102,32 @@ describe('Registrierung im Hauptprozess', () => {
     };
     await buildIpcHandlers(deps)['csv:loadEvents'](['a.csv']);
     assert.deepEqual(seen, [['a.csv']]);
+  });
+
+  it('leitet Anmeldung und Upload an die gewählte Stage und weist unbekannte Stages ab', async () => {
+    const used: string[] = [];
+    const deps = fakeDeps();
+    deps.nuernbergspots = (target) => {
+      used.push(`auth:${target}`);
+      return { getStatus: () => ({ target, connected: false }), login: async () => ({ success: true }), logout: () => {} };
+    };
+    deps.uploader = (target) => {
+      used.push(`upload:${target}`);
+      return { uploadFiles: async () => ({ target } as never) };
+    };
+    const handlers = buildIpcHandlers(deps);
+
+    await handlers['nuernbergspots:getStatus']('test');
+    await handlers['nuernbergspots:login']({ target: 'prod', email: 'a@b.de', password: 'x' });
+    await handlers['nuernbergspots:logout']('test');
+    await handlers['nuernbergspots:upload']({ target: 'test', fileNames: ['a.csv'] });
+    assert.deepEqual(used, ['auth:test', 'auth:prod', 'auth:test', 'upload:test']);
+
+    assert.throws(() => handlers['nuernbergspots:getStatus']('staging' as never), /Unbekannte Stage/);
+    assert.throws(
+      () => handlers['nuernbergspots:upload']({ fileNames: ['a.csv'] } as never),
+      /Unbekannte Stage/
+    );
   });
 
   it('schickt Statusmeldungen über den übergebenen Kanal', async () => {

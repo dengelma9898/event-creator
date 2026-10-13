@@ -48,6 +48,10 @@ Webseite: https://www.parks-nuernberg.de/
 - `category` enthält **nur** den exakten App-Kategorie-`name` (ein Wert) oder bleibt **leer**.
 - Quell-Kategorie nur intern als `sourceCategory` für die Zuordnung nutzen.
 
+### Regel: Adress-Fallback (Referenz: `skills/address-completion`)
+
+- Der feste Veranstaltungsort oben hat Vorrang. Nur falls der Ort dennoch unvollständig wäre, gilt die Adresssuche aus `skills/address-completion`.
+
 ### Regel: Abgesagte Events
 
 Vor `add_event` Event **überspringen** wenn:

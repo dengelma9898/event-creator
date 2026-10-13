@@ -44,5 +44,6 @@ data/<quelle>-events-data-YYYY-MM-DD-3.csv    # 101–150
 - **Startdatum**: Pflichtfeld, im Format `YYYY-MM-DD`. Frühestens morgen (`Startdatum >= heute + 1 Tag`).
 - **Tickets**: nur `ja` oder `nein`; **Ticket-URL**: Shop-URL oder leer.
 - **Kategorien**: exakter App-Kategorie-`name` (eine der 7 Kategorien) oder leer → siehe `event-category-mapper`.
+- **Veranstaltungsort**: Ist nur ein Einrichtungsname ohne Straße/PLZ/Stadt vorhanden, wird er vor `add_event` per kurzer Websuche vervollständigt → siehe `address-completion`. Bleibt die Suche erfolglos, wird das Event trotzdem gespeichert.
 - **Abgesagte Events**: Events mit `Abgesagt:` im Titel oder `\b(abgesagt|cancelled|verschoben)\b` im Titel bzw. `ersatzlos abgesagt` in der Beschreibung werden von der App abgewiesen.
 - **Lauf-Limit**: standardmäßig maximal 30 neue Events pro Run (bereits bekannte Bestandsevents zählen nicht zum Limit).
